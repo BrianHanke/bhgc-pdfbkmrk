@@ -1,0 +1,3 @@
+In an x64 Native Tools Command Prompt run:
+
+cl /Fe:pdfbkmrk.exe main.c
