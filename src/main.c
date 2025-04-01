@@ -1,11 +1,18 @@
-#include "install.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <windows.h>
+#include <signal.h>
 
-intptr_t getlineud(char **lineptr, size_t *n, FILE *stream)
+char *prepress;
+
+intptr_t getLineUd(char **lineptr, size_t *n, FILE *stream)
 {
     size_t pos;
     int c;
 
-    if (lineptr == NULL || stream == NULL || n == NULL)
+    if(lineptr == NULL || stream == NULL || n == NULL)
 	{
         errno = SIGINT;
 
@@ -14,16 +21,16 @@ intptr_t getlineud(char **lineptr, size_t *n, FILE *stream)
 
     c = getc(stream);
 
-    if (c == EOF)
+    if(c == EOF)
 	{
         return -1;
     }
 
-    if (*lineptr == NULL)
+    if(*lineptr == NULL)
 	{
         *lineptr = malloc(128);
 
-        if (*lineptr == NULL)
+        if(*lineptr == NULL)
 		{
             return -1;
         }
@@ -39,14 +46,14 @@ intptr_t getlineud(char **lineptr, size_t *n, FILE *stream)
 		{
             size_t new_size = *n + (*n >> 2);
 
-            if (new_size < 128)
+            if(new_size < 128)
 			{
                 new_size = 128;
             }
 
             char *new_ptr = realloc(*lineptr, new_size);
 
-            if (new_ptr == NULL)
+            if(new_ptr == NULL)
 			{
                 return -1;
             }
@@ -57,7 +64,7 @@ intptr_t getlineud(char **lineptr, size_t *n, FILE *stream)
 
         ((unsigned char *)(*lineptr))[pos ++] = c;
 
-        if (c == '\n')
+        if(c == '\n')
 		{
             break;
         }
@@ -70,22 +77,12 @@ intptr_t getlineud(char **lineptr, size_t *n, FILE *stream)
     return pos;
 }
 
-char *prepress;
-
-void freeGlobals()
-{
-    if(CURRENT_DIR)			free(CURRENT_DIR);
-    if(DEFAULT_PROGRAM_DIR)	free(DEFAULT_PROGRAM_DIR);
-    if(prepress) 			free(prepress);
-}
-
 void reportErrors(int line)
 {
-	printf("bookmarks.file error: line %d\n\n", line);
-	printf("Please check syntax is:\n");
-	printf("[PageNo] [Title]\n\n");
-	printf("And that there aren't empty regions.\n");
-	printf("HINT: Put a new line at end if only 1 bookmark in bookmarks.file.\n");
+	printf("ERROR: bookmarks.txt at line %d\n\n", line);
+	printf("Required syntax:\n");
+	printf("[Page Number] [Bookmark Name]\n\n");
+	printf("HINT: Put a new line at the end if there is only one bookmark.\n");
 }
 
 int *checkBookmarks(FILE **bookmarks, int *_n_lines)
@@ -94,7 +91,7 @@ int *checkBookmarks(FILE **bookmarks, int *_n_lines)
 	char *line = NULL;
 	size_t size = 0;
 
-	while(getlineud(&line, &size, *bookmarks) > 0)
+	while(getLineUd(&line, &size, *bookmarks) > 0)
 	{
 		n_lines_++;
 	}
@@ -109,7 +106,7 @@ int *checkBookmarks(FILE **bookmarks, int *_n_lines)
 		char *line = NULL;
 		size_t size = 0;
 		int i = 0,
-		    temp = getlineud(&line, &size, *bookmarks);
+		    temp = getLineUd(&line, &size, *bookmarks);
 		bool exit_true = false;
 
 		while(temp > 0)
@@ -137,19 +134,19 @@ int *checkBookmarks(FILE **bookmarks, int *_n_lines)
 			}
 
 			treeArr[i++] = count;
-			temp = getlineud(&line, &size, *bookmarks);
+			temp = getLineUd(&line, &size, *bookmarks);
 		}
 
 		free(line);
 
-		if (exit_true)
+		if(exit_true)
 		{
 			printf("] in bookmarks.file.\n");
 
 			return NULL;
 		}
 
-		for (int i = 0; i < n_lines; i++)
+		for(int i = 0; i < n_lines; i++)
 		{
 			int tabdiff = treeArr[i + 1] - treeArr[i];
 
@@ -162,7 +159,7 @@ int *checkBookmarks(FILE **bookmarks, int *_n_lines)
 		}
 	}
 	{
-		for (int i = 0; i < n_lines; i++)
+		for(int i = 0; i < n_lines; i++)
 		{
 			int j = i + 1,
 			    count = 0;
@@ -222,7 +219,7 @@ bool checkFileByName(const char *filename, char code)
 
             size_t len = ftell(check);
 
-            if (len <= 0)
+            if(len <= 0)
 			{
                 printf("%s seems to be empty!\n\n ", filename);
                 fclose(check);
@@ -257,10 +254,10 @@ bool writePostScriptFile(const char *bookmarks_name, const int n_lines, int *tre
     fseek(bookmarks, 0, SEEK_SET);
     printf("\nExecuting Ghostscript command:\n\n");
 
-	for (int i = 0; i < n_lines; i++)
+	for(int i = 0; i < n_lines; i++)
 	{
 		unsigned pgno;
-		sizelen = getlineud(&line, &size, bookmarks);
+		sizelen = getLineUd(&line, &size, bookmarks);
 		title = (char*)realloc(title, sizelen * sizeof(char));
 
 		if(!title)
@@ -396,7 +393,10 @@ int main(int argc, char *argv[])
         printf("\n\nExiting...");
     }
 
-    freeGlobals();
+    if(prepress)
+	{
+		free(prepress);
+	}
 
     return 0;
 }
