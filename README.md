@@ -1,4 +1,4 @@
-- Install the latest Windows x64 APGL Ghostscript here: https://www.ghostscript.com/releases/gsdnld.html
+- Install the latest Windows x64 AGPL Ghostscript here: https://www.ghostscript.com/releases/gsdnld.html
 - Add \<ghostscriptInstallFolder\>/bin to your Windows PATH.
 - Create a bookmarks.txt file in the same folder as pdfbkmrk.exe. Bookmarks are listed one per line and formatted as \<Page Number\> \<Bookmark Name\>.
 - Copy the PDF file you want to create bookmarks for to the same folder as pdfbkmrk.exe.
