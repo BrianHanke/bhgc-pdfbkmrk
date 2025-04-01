@@ -1,9 +1,6 @@
 #include "install.h"
 
-typedef intptr_t ssize_t;
-typedef unsigned int u_int;
-
-ssize_t getlineud(char **lineptr, size_t *n, FILE *stream)
+intptr_t getlineud(char **lineptr, size_t *n, FILE *stream)
 {
     size_t pos;
     int c;
@@ -113,8 +110,8 @@ int *checkBookmarks(FILE **bookmarks, int *_n_lines)
 	{
 		char *line = NULL;
 		size_t size = 0;
-		int i = 0;
-		int temp = getlineud(&line, &size, *bookmarks);
+		int i = 0,
+		    temp = getlineud(&line, &size, *bookmarks);
 		bool exit_true = false;
 
 		while(temp > 0)
@@ -169,8 +166,8 @@ int *checkBookmarks(FILE **bookmarks, int *_n_lines)
 	{
 		for (int i = 0; i < n_lines; i++)
 		{
-			int j = i + 1;
-			int count = 0;
+			int j = i + 1,
+			    count = 0;
 
 			if(treeArr[j] - treeArr[i] == 1)
 			{
@@ -267,13 +264,12 @@ bool writePostScriptFile(const char *bookmarks_name, const int n_lines, int *tre
     FILE *settings=fopen(settings_file, "w"),
          *bookmarks = fopen(bookmarks_name, "r");
     long sizelen;
-    char *line = NULL;
+    char *line = NULL,
+	     *title = NULL;
     size_t size = 0;
 
     fseek(bookmarks, 0, SEEK_SET);
     printf("\nExecuting Ghostscript command:\n\n");
-
-    char *title = NULL;
 
 	for (int i = 0; i < n_lines; i++)
 	{
@@ -292,7 +288,7 @@ bool writePostScriptFile(const char *bookmarks_name, const int n_lines, int *tre
 
 		if(treeArr[i])
 		{
-			if(temp==2)
+			if(temp == 2)
 			{
 				fprintf(settings, "[/Count %d /Page %d /Title (%s) /OUT pdfmark\n", treeArr[i], pgno + page_offset, title);
 			}
@@ -372,8 +368,7 @@ int main(int argc, char *argv[])
 
     int page_offset = 0;
     char temp;
-	const char *bookmarks_name = "bookmarks.txt",
-			   *not_set = "NOT_SET";
+	const char *bookmarks_name = "bookmarks.txt";
 	char *input_name = argv[1],
 		 *output_name = argv[2];
     bool add_bookmarks = false;

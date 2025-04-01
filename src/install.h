@@ -120,7 +120,6 @@ bool setDefDir (char *path)
     if(path)
 	{
         FILE *def_dir = fopen(DEFAULT_DIR_FILE, "w");
-        // fwrite(path, sizeof(char), sizeof(char) * strlen(path) +1, def_dir);
         fputs(path, def_dir);
         fclose(def_dir);
     }
@@ -130,7 +129,6 @@ bool setDefDir (char *path)
         FILE *def_dir = fopen(DEFAULT_DIR_FILE, "w");
         path = (char * )realloc(path, sizeof(char) * 20);
         strcpy (path, "C:\\Program Files\\" );
-        // fwrite(path, sizeof(char), sizeof(char) * 20 + 1, def_dir);
         fputs(path, def_dir);
         free (path);
         fclose(def_dir);
@@ -140,7 +138,6 @@ bool setDefDir (char *path)
     long size = getFileSize(def_dir);
     DEFAULT_PROGRAM_DIR = (char *)malloc(size);
     fgets(DEFAULT_PROGRAM_DIR, size+1, def_dir);
-    // fread(DEFAULT_PROGRAM_DIR, sizeof (char), sizeof(char) * size + 1, def_dir);
     fclose(def_dir);
 
     return true;
@@ -154,11 +151,9 @@ bool gsExists()
     CURRENT_DIR = (char *)malloc(dir_len*sizeof(char));
     GetCurrentDirectory(dir_len, CURRENT_DIR);
 
-    //print gs3x1.txt
     char cmd[1024];
     char tempfile_gspath[] = "gs3x1.txt";
     sprintf(cmd, "cd /d  \"%s\" && dir /b /s gs*c.exe > \"%s\\%s\"", DEFAULT_PROGRAM_DIR, CURRENT_DIR, tempfile_gspath);
-    // printf(cmd);
     bool found_gs = !system(cmd);
 
     if(found_gs)
@@ -170,11 +165,9 @@ bool gsExists()
             printf("Failed");
         }
 
-        //get file len
         fseek(o_tempfile_gspath,0,SEEK_END);
         long len = ftell(o_tempfile_gspath);
         rewind(o_tempfile_gspath);
-        //len set
         PATH_GS = (char *) malloc (sizeof(char)*(len));
         fgets(PATH_GS, len, o_tempfile_gspath);
         fclose(o_tempfile_gspath);
@@ -196,11 +189,10 @@ bool init()
     }
     else
 	{
-        // system(clear);
-        printf("\nGhostscript GPL wasn't found in default directory \"%s\"", DEFAULT_PROGRAM_DIR);
-        printf("\n\n    * If it's already installed , press 'X' to SET a CUSTOM DEFAULT directory");
-        printf("\n    * Press 'Y' to install Ghostscript from internet" );
-        printf("\n\nPress ENTER only to skip\n");
+        printf("\nGhostscript not found in default location: %s", DEFAULT_PROGRAM_DIR);
+        printf("\n\nIf it's already installed, press 'X' to set a custom default directory.");
+        printf("\nPress 'Y' to install Ghostscript from the internet." );
+        printf("\n\nPress 'enter' only to skip\n");
         char c[2];
         scanf("%[^\n]s", &c);
         getchar();
@@ -210,7 +202,7 @@ bool init()
             printf("\nEnter Ghostscript directory: ");
             char *path = alocString();
             setDefDir(path);
-            printf("\nPath set -> %s", DEFAULT_PROGRAM_DIR);
+            printf("\nPath set to %s", DEFAULT_PROGRAM_DIR);
 
             if(gsExists())
 			{
@@ -218,16 +210,15 @@ bool init()
 			}
             else
 			{
-                printf("\nCould not find Ghostscript installed inside: %s", DEFAULT_PROGRAM_DIR);
+                printf("\nCould not find Ghostscript in %s", DEFAULT_PROGRAM_DIR);
             }
         }
         else if(c[0] == 'Y' || c[0] == 'y')
 		{
-            // system("cls");
             printf("\nYou can either manually install it from 'www.ghostscript.com,'");
-            printf("\n  or this program can do it for you automatically.");
-            printf("\n\n    * Press 'ENTER' key to download and install automatically.");
-            printf("\n    * Press Ctrl+C to do it manually.");
+            printf("\n or this program can do it for you automatically.");
+            printf("\n\nPress 'enter' to download and install automatically.");
+            printf("\nPress Ctrl + C to exit and install manually.");
             printf("\n\nWaiting for input ...\n");
             getchar();
 
