@@ -168,7 +168,7 @@ bool gsExists()
         fseek(o_tempfile_gspath,0,SEEK_END);
         long len = ftell(o_tempfile_gspath);
         rewind(o_tempfile_gspath);
-        PATH_GS = (char *) malloc (sizeof(char)*(len));
+        PATH_GS = (char *)malloc(sizeof(char)*(len));
         fgets(PATH_GS, len, o_tempfile_gspath);
         fclose(o_tempfile_gspath);
         printf("\n\nGhostscript GPL found: %s", PATH_GS );

@@ -70,13 +70,11 @@ intptr_t getlineud(char **lineptr, size_t *n, FILE *stream)
     return pos;
 }
 
-bool init();
 char *prepress;
 
 void freeGlobals()
 {
     if(CURRENT_DIR)			free(CURRENT_DIR);
-    if(PATH_GS)    			free(PATH_GS);
     if(DEFAULT_PROGRAM_DIR)	free(DEFAULT_PROGRAM_DIR);
     if(prepress) 			free(prepress);
 }
@@ -191,18 +189,6 @@ int *checkBookmarks(FILE **bookmarks, int *_n_lines)
 	return treeArr;
 }
 
-bool checkInit()
-{
-    if(!init())
-	{
-        printf("\n\nGhostscript not found.\n\n");
-
-        return false;
-    }
-
-    return true;
-}
-
 bool checkFileByName(const char *filename, char code)
 {
     FILE *check = fopen(filename, "r");
@@ -225,8 +211,8 @@ bool checkFileByName(const char *filename, char code)
 	{
         if(!check)
 		{
-            printf("\n\n Any file named '%s' doesn't seem to exist in current directory.\n If you created it, make sure it is in the same directory as PDFBookmark.exe\n\n ", filename);
-            perror(filename);
+            printf("\nERROR: Input file %s not found.\n ", filename);
+            //perror(filename);
 
             return false;
         }
@@ -256,7 +242,7 @@ bool checkFileByName(const char *filename, char code)
 
 bool writePostScriptFile(const char *bookmarks_name, const int n_lines, int *treeArr, short page_offset)
 {
-    char settings_file[] = "53++1Nq5.txt";
+    char settings_file[] = "prepress.txt";
 
     prepress = (char *)malloc(strlen(settings_file));
     strcpy(prepress, settings_file);
@@ -331,9 +317,8 @@ bool writePostScriptFile(const char *bookmarks_name, const int n_lines, int *tre
 void addBookmarks(char *output_name, char *input_name, const char *bookmarks_name)
 {
     char cmd[2048];
-    PATH_GS[strlen(PATH_GS) - 1] = 0;
 
-    sprintf(cmd, "\"%s\" -dBATCH -dNOPAUSE -dQUIET -sDEVICE=pdfwrite -sOutputFile=%s -dPDFSETTINGS=/prepress %s %s", PATH_GS, output_name, prepress, input_name);
+    sprintf(cmd, "gswin64c.exe -dBATCH -dNOPAUSE -dQUIET -sDEVICE=pdfwrite -sOutputFile=%s -dPDFSETTINGS=/prepress %s %s", output_name, prepress, input_name);
     printf("%s", cmd);
 
     bool done = !system(cmd);
@@ -358,13 +343,6 @@ int main(int argc, char *argv[])
 
 		return 0;
 	}
-
-    printf("\nSearching for Ghostscript...");
-
-    if(!checkInit())
-	{
-        return 10;
-    }
 
     int page_offset = 0;
     char temp;
