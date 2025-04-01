@@ -152,7 +152,7 @@ bool gsExists()
 
     DWORD dir_len = GetCurrentDirectory(0, NULL);
     CURRENT_DIR = (char *)malloc(dir_len*sizeof(char));
-    GetCurrentDirectory(dir_len,CURRENT_DIR);
+    GetCurrentDirectory(dir_len, CURRENT_DIR);
 
     //print gs3x1.txt
     char cmd[1024];
@@ -169,6 +169,7 @@ bool gsExists()
 		{
             printf("Failed");
         }
+
         //get file len
         fseek(o_tempfile_gspath,0,SEEK_END);
         long len = ftell(o_tempfile_gspath);

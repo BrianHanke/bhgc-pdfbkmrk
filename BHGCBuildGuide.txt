@@ -1,3 +1,13 @@
 In an x64 Native Tools Command Prompt run:
 
+cd src
 cl /Fe:pdfbkmrk.exe main.c
+
+To test, run:
+
+./pdfbkmrk UserGuide.pdf test.pdf
+
+Or, when using a local build environment, run:
+
+build
+test
