@@ -119,7 +119,7 @@ int *checkBookmarks(FILE **bookmarks, int *_n_lines)
 				}
 				else
 				{
-					printf("Please remove empty line at lines: [%d", i + 1);
+					printf("Remove empty lines: [%d", i + 1);
 				}
 
 				exit_true = true;
@@ -209,7 +209,6 @@ bool checkFileByName(const char *filename, char code)
         if(!check)
 		{
             printf("\nERROR: Input file %s not found.\n ", filename);
-            //perror(filename);
 
             return false;
         }
@@ -221,7 +220,7 @@ bool checkFileByName(const char *filename, char code)
 
             if(len <= 0)
 			{
-                printf("%s seems to be empty!\n\n ", filename);
+                printf("ERROR: %s is empty.\n\n ", filename);
                 fclose(check);
                 perror(filename);
 
@@ -244,7 +243,7 @@ bool writePostScriptFile(const char *bookmarks_name, const int n_lines, int *tre
     prepress = (char *)malloc(strlen(settings_file));
     strcpy(prepress, settings_file);
 
-    FILE *settings=fopen(settings_file, "w"),
+    FILE *settings = fopen(settings_file, "w"),
          *bookmarks = fopen(bookmarks_name, "r");
     long sizelen;
     char *line = NULL,
